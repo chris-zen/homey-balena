@@ -10,6 +10,7 @@ services:
   thermostat:
     image: chriszen/homey-thermostat:0.1.0-armhf
     restart: always
+    network_mode: "host"
     environment:
       - MQTT_URL=mqtt://localhost:1883
       - UI_HREF_URL=http://localhost:9000/index.html
