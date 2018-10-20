@@ -16,13 +16,12 @@ services:
     restart: always
     network_mode: "host"
     environment:
-      - MQTT_URL=mqtt://localhost:1883
-      - UI_HREF_URL=http://localhost:9000/index.html
+      - MQTT_URL=mqtt://mosquitto:1883
+      - UI_HREF_URL=index.html
 
   homeassistant:
     image: homeassistant/raspberrypi3-homeassistant:0.80.3
     restart: always
-    network_mode: "host"
     ports:
       - 8123:8123
     volumes:
