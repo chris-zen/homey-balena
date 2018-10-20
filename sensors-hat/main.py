@@ -48,6 +48,9 @@ async def heater():
 
     target = 0
 
+    def on_subscribe(mqttc, obj, mid, granted_qos):
+        print("Subscribed: "+str(mid)+" "+str(granted_qos))
+
     def on_message(client, user_data, message):
         print("MQTT msg >" + message)
         target = int(message)
@@ -57,13 +60,14 @@ async def heater():
         else:
             set_bg(sense, 255, 255, 255)
 
+    mqtt_client.on_subscribe = on_subscribe
     mqtt_client.on_message = on_message
     mqtt_client.subscribe('heater/target')
 
     while True:
         print("> " + str(target))
         mqtt_client.loop()
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.1)
 
 async def main():
     await asyncio.gather(
