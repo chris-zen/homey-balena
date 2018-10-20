@@ -23,6 +23,6 @@ services:
     image: homeassistant/raspberrypi3-homeassistant:0.80.3
     restart: always
     ports:
-      - 8123:80
+      - 8123:8123
     volumes:
       - homeassistant-config:/config
