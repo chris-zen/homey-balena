@@ -1,5 +1,6 @@
 import os
 import asyncio
+import json
 
 import paho.mqtt.client as mqtt
 from sense_hat import SenseHat
@@ -23,10 +24,10 @@ async def sensors():
         mqtt_client.publish('sensors/inside/humidity', humidity)
         mqtt_client.publish('sensors/inside/pressure', pressure)
 
-        all_sensors = dict(
+        all_sensors = json.dumps(dict(
             t=temperature,
             h=humidity,
-            p=pressure)
+            p=pressure))
 
         mqtt_client.publish('sensors/inside', all_sensors)
 
