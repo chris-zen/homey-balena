@@ -66,9 +66,12 @@ async def heater():
 
 async def main():
     await asyncio.gather(
-        sensors()
+        sensors(),
+        heater()
     )
 
+
+set_bg(sense, 128, 0, 255)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
