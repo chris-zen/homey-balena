@@ -60,10 +60,9 @@ async def heater():
     mqtt_client.on_message = on_message
     mqtt_client.subscribe('heater/target')
 
-    mqtt_client.loop_forever()
-
     while True:
         print("> " + str(target))
+        mqtt_client.loop()
         await asyncio.sleep(1)
 
 async def main():
