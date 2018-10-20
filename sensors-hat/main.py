@@ -45,6 +45,8 @@ async def sensors():
 async def heater():
     mqtt_client = mqtt.Client()
     mqtt_client.connect(MQTT_HOST)
+    await asyncio.sleep(5)
+    set_bg(sense, 128, 255, 128)
 
     target = 0
 
@@ -62,8 +64,8 @@ async def heater():
 
     mqtt_client.on_subscribe = on_subscribe
     mqtt_client.on_message = on_message
-    mqtt_client.subscribe('heater/target')
     mqtt_client.loop_start()
+    mqtt_client.subscribe('heater/target')
 
     while True:
         mqtt_client.loop()
