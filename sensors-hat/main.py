@@ -7,6 +7,8 @@ from sense_hat import SenseHat
 
 
 MQTT_HOST = os.environ['MQTT_HOST']
+TEMPERATURE_CORRECTION = float(os.environ.get('TEMPERATURE_CORRECTION', "0"))
+HUMIDITY_CORRECTION = float(os.environ.get('HUMIDITY_CORRECTION', "0"))
 
 sense = SenseHat()
 
@@ -16,8 +18,8 @@ async def sensors():
     mqtt_client.connect(MQTT_HOST)
 
     while True:
-        temperature = sense.temperature
-        humidity = sense.humidity
+        temperature = sense.temperature + TEMPERATURE_CORRECTION
+        humidity = sense.humidity + HUMIDITY_CORRECTION
         pressure = sense.pressure
 
         mqtt_client.publish('sensors/inside/temperature', temperature)

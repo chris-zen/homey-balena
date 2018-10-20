@@ -12,7 +12,7 @@ services:
       - "9001:9001"
 
   thermostat:
-    image: chriszen/homey-thermostat:0.1.0-armhf
+    image: chriszen/homey-thermostat:0.1.1-armhf
     restart: always
     network_mode: "host"
     depends_on:
@@ -39,3 +39,5 @@ services:
       - mosquitto
     environment:
       - MQTT_HOST=mosquitto
+      - TEMPERATURE_CORRECTION=-8.0
+      - HUMIDITY_CORRECTION=30.0
