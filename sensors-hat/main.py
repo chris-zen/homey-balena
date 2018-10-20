@@ -49,7 +49,7 @@ async def heater():
     target = 0
 
     def on_message(client, user_data, message):
-        print(message)
+        print("MQTT msg >" + message)
         target = int(message)
 
         if int(message) == 1:
@@ -59,6 +59,8 @@ async def heater():
 
     mqtt_client.on_message = on_message
     mqtt_client.subscribe('heater/target')
+
+    mqtt_client.loop_forever()
 
     while True:
         print("> " + str(target))
