@@ -3,7 +3,26 @@ import asyncio
 import json
 
 import paho.mqtt.client as mqtt
-from sense_hat import SenseHat
+
+try:
+    from sense_hat import SenseHat
+except:
+    class SenseHat(object):
+        def set_pixel(self, x, y, r, g, b):
+            # print("set_pixel({}, {}, {}, {}, {})".format(x, y, r, g, b))
+            pass
+
+        @property
+        def temperature(self):
+            return 25
+
+        @property
+        def humidity(self):
+            return 50
+
+        @property
+        def pressure(self):
+            return 1050
 
 
 MQTT_HOST = os.environ['MQTT_HOST']
@@ -14,6 +33,7 @@ sense = SenseHat()
 
 
 def set_bg(sense, r, g, b):
+    print("set_bg({}, {}, {})".format(r, g, b))
     for i in range(0, 8):
         for j in range(0, 8):
             sense.set_pixel(i, j, r, g, b)
@@ -44,32 +64,36 @@ async def sensors():
 
 async def heater():
     mqtt_client = mqtt.Client()
-    mqtt_client.connect(MQTT_HOST)
-    await asyncio.sleep(5)
-    set_bg(sense, 128, 255, 128)
 
-    target = 0
+    prev_target = 0
+    heater = dict(target=0)
 
-    def on_subscribe(client, obj, mid, granted_qos):
-        print("Subscribed: "+str(mid)+" "+str(granted_qos))
+    def on_connect(mqttc, obj, flags, rc):
+        print("Connected to MQTT")
+        set_bg(sense, 0, 0, 255)
+        mqtt_client.subscribe('heater/target')
 
     def on_message(client, user_data, message):
-        print("MQTT msg >" + message)
-        target = int(message)
+        payload = message.payload.decode("utf-8")
+        heater['target'] = int(payload)
 
-        if int(message) == 1:
-            set_bg(sense, 0, 0, 0)
-        else:
-            set_bg(sense, 255, 255, 255)
-
-    mqtt_client.on_subscribe = on_subscribe
+    mqtt_client.on_connect = on_connect
     mqtt_client.on_message = on_message
-    mqtt_client.loop_start()
-    mqtt_client.subscribe('heater/target')
+    mqtt_client.connect(MQTT_HOST)
 
     while True:
+        target = heater['target']
+        if prev_target != target:
+            prev_target = target
+            if target == 1:
+                set_bg(sense, 255, 0, 0)
+            else:
+                set_bg(sense, 0, 0, 255)
+
         mqtt_client.loop()
-        await asyncio.sleep(0.1)
+
+        await asyncio.sleep(0.5)
+
 
 async def main():
     await asyncio.gather(
@@ -78,7 +102,7 @@ async def main():
     )
 
 
-set_bg(sense, 128, 0, 255)
+set_bg(sense, 255, 255, 255)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
