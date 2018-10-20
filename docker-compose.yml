@@ -22,6 +22,7 @@ services:
   homeassistant:
     image: homeassistant/raspberrypi3-homeassistant:0.80.3
     restart: always
+    network_mode: "host"
     ports:
       - 8123:8123
     volumes:
