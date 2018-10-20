@@ -66,7 +66,6 @@ async def heater():
     mqtt_client.loop_start()
 
     while True:
-        print("> " + str(target))
         mqtt_client.loop()
         await asyncio.sleep(0.1)
 
