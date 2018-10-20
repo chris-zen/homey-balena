@@ -13,6 +13,12 @@ HUMIDITY_CORRECTION = float(os.environ.get('HUMIDITY_CORRECTION', "0"))
 sense = SenseHat()
 
 
+def set_bg(sense, r, g, b):
+    for i in range(0, 8):
+        for j in range(0, 8):
+            sense.set_pixel(i, j, r, g, b)
+
+
 async def sensors():
     mqtt_client = mqtt.Client()
     mqtt_client.connect(MQTT_HOST)
@@ -35,6 +41,28 @@ async def sensors():
 
         await asyncio.sleep(1)
 
+
+async def heater():
+    mqtt_client = mqtt.Client()
+    mqtt_client.connect(MQTT_HOST)
+
+    target = 0
+
+    def on_message(client, user_data, message):
+        print(message)
+        target = int(message)
+
+        if int(message) == 1:
+            set_bg(sense, 0, 0, 0)
+        else:
+            set_bg(sense, 255, 255, 255)
+
+    mqtt_client.on_message = on_message
+    mqtt_client.subscribe('heater/target')
+
+    while True:
+        print("> " + str(target))
+        await asyncio.sleep(1)
 
 async def main():
     await asyncio.gather(
