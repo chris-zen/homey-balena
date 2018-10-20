@@ -18,7 +18,7 @@ services:
     depends_on:
       - mosquitto
     environment:
-      - MQTT_URL=mqtt://mosquitto:1883
+      - MQTT_URL=mqtt://localhost:1883
       - UI_HREF_URL=index.html
 
   homeassistant:
