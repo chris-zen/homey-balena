@@ -1,4 +1,8 @@
 version: '2'
+
+volumes:
+  homeassistant-config:
+
 services:
   mosquitto:
     image: pascaldevink/rpi-mosquitto
@@ -15,3 +19,10 @@ services:
       - MQTT_URL=mqtt://localhost:1883
       - UI_HREF_URL=http://localhost:9000/index.html
 
+  homeassistant:
+    image: homeassistant/raspberrypi3-homeassistant:0.80.3
+    restart: always
+    ports:
+      - 8123:80
+    volumes:
+      - homeassistant-config:/config
